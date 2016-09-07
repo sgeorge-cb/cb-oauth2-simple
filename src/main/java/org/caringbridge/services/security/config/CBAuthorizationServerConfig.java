@@ -25,38 +25,38 @@ public class CBAuthorizationServerConfig  extends AuthorizationServerConfigurerA
 
 	@Resource(name="authenticationManager")
 	private ProviderManager authenticationManager;
-	
+
 	@Autowired
 	private TokenStore tokenStore;
-	
-	
+
+
 	@Override
 	public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
 		tokenStore = tokenStore();
-	    	endpoints.authenticationManager(authenticationManager)
-	    	.tokenStore(tokenStore)
-	    	.accessTokenConverter(tokenEnhancer());
+		endpoints.authenticationManager(authenticationManager)
+		.tokenStore(tokenStore)
+		.accessTokenConverter(tokenEnhancer());
 	}	
 
 
-	 @Override
-	  public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
+	@Override
+	public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
 
-		 oauthServer.allowFormAuthenticationForClients();
-	     oauthServer
-	       .tokenKeyAccess("permitAll()") ///oauth/token_key
-	       .checkTokenAccess("permitAll()"); ///oauth/check_token
+		oauthServer.allowFormAuthenticationForClients();
+		oauthServer
+		.tokenKeyAccess("permitAll()") ///oauth/token_key
+		.checkTokenAccess("permitAll()"); ///oauth/check_token
 	}
-		
+
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
-	 	clients.inMemory()
-	        .withClient("hallmark")
-	            .authorizedGrantTypes("client_credentials", "password", "refresh_token")
-	            .authorities("ROLE_CLIENT")
-	            .scopes("read", "write", "trust")
-	            .resourceIds("cboauth2/secret")
-	            .secret("secret_password");
+		clients.inMemory()
+		.withClient("hallmark")
+		.authorizedGrantTypes("client_credentials", "password", "refresh_token")
+		.authorities("ROLE_CLIENT")
+		.scopes("read", "write", "trust")
+		.resourceIds("cboauth2/secret")
+		.secret("secret_password");
 	}
 
 	@Bean
@@ -65,18 +65,18 @@ public class CBAuthorizationServerConfig  extends AuthorizationServerConfigurerA
 		store.setTokenStore(tokenStore);
 		return store;
 	}
-	
-    @Bean
-    public JwtAccessTokenConverter tokenEnhancer(){
-        final JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
-        jwtAccessTokenConverter.setSigningKey("ThisIsAComplexKey");
-        return jwtAccessTokenConverter;
-    }
-	
+
+	@Bean
+	public JwtAccessTokenConverter tokenEnhancer(){
+		final JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();
+		jwtAccessTokenConverter.setSigningKey("ThisIsAComplexKey");
+		return jwtAccessTokenConverter;
+	}
+
 	@Bean
 	public TokenStore tokenStore() {
-	    return new JwtTokenStore(tokenEnhancer());
+		return new JwtTokenStore(tokenEnhancer());
 	}
-	
+
 
 }
